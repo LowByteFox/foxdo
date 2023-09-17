@@ -1,0 +1,3 @@
+# foxdo
+
+minimal sudo
