@@ -14,7 +14,7 @@ pub fn build(b: *std.Build) void {
     });
 
     b.installArtifact(exe);
-    foxconfig.addTo(b, exe, target, optimize);
+    foxconfig.addTo(exe);
 
     const run_cmd = b.addRunArtifact(exe);
 
