@@ -14,6 +14,7 @@ pub fn build(b: *std.Build) void {
     });
 
     b.installArtifact(exe);
+    exe.linkLibC();
     foxconfig.addTo(exe);
 
     const run_cmd = b.addRunArtifact(exe);

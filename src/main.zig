@@ -1,5 +1,6 @@
 const std = @import("std");
 const conf = @import("config.zig");
+const grp = @import("groups.zig");
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -23,6 +24,13 @@ pub fn main() !void {
     var config = test_config.?;
     defer conf.deinit_config(&config, allocator);
 
-    std.debug.print("{any}\n{any}\n", .{config.allow.users.a_s.items, config.allow.groups.a_s.items});
-    std.debug.print("{}\n{}\n{}\n", .{config.timeout.seconds, config.timeout.minutes, config.timeout.hours});
+    var has_group = grp.check_groups(&config);
+    var has_user = grp.check_users(&config);
+
+    if (!(has_group || has_user)) {
+        std.debug.print("foxdo: not allowed!\n", .{});
+        std.os.exit(1);
+    }
+
+    
 }
