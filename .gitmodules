@@ -1,0 +1,3 @@
+[submodule "src/foxconfig"]
+	path = src/foxconfig
+	url = https://codeberg.org/LowByteFox/foxconfig.git
