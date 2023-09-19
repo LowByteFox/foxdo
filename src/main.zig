@@ -2,6 +2,10 @@ const std = @import("std");
 const conf = @import("config.zig");
 const grp = @import("groups.zig");
 const timeout = @import("timeout.zig");
+const auth = @import("auth.zig");
+const c = @cImport({
+    @cInclude("unistd.h");
+});
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -37,18 +41,22 @@ pub fn main() !void {
 
     const time: i64 = std.time.timestamp();
 
-    const result = try timeout.check_self(login, time, allocator);
+    const result = !try timeout.check_self(login, time, allocator);
 
     if (args.len == 2) {
-        if (!result) {
-            std.debug.print("Enter password for [{s}]: \n", .{login});
+        if (result) {
+            std.debug.print("Enter password for [{s}]: ", .{login});
         }
 
-        if (!result) {
+        if (result and auth.check_password(login, std.mem.span(c.getpass("")))) {
+            std.debug.print("Ano\n", .{});
+        }
+
+        if (result) {
             try timeout.register_self(login, time
-                + config.timeout.seconds.i * 1000
-                + config.timeout.minutes.i * 60 * 1000
-                + config.timeout.hours.i * 60 * 60 * 1000,
+                + config.timeout.seconds.i
+                + config.timeout.minutes.i * 60
+                + config.timeout.hours.i * 60 * 60,
                 allocator);
         }
     }

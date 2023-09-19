@@ -66,5 +66,5 @@ pub fn check_self(username: []const u8, time: i64, allocator: std.mem.Allocator)
 
     var innum = try std.fmt.parseInt(i64, num, 10);
 
-    return time > innum;
+    return time < innum;
 }
