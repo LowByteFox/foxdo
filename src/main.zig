@@ -3,6 +3,9 @@ const conf = @import("config.zig");
 const grp = @import("groups.zig");
 const timeout = @import("timeout.zig");
 const auth = @import("auth.zig");
+const root = @import("rootize.zig");
+const launch = @import("launch.zig");
+
 const c = @cImport({
     @cInclude("unistd.h");
 });
@@ -49,15 +52,29 @@ pub fn main() !void {
         }
 
         if (result and auth.check_password(login, std.mem.span(c.getpass("")))) {
-            std.debug.print("Ano\n", .{});
+            if (c.getuid() != 0) {
+                root.rootize();
+            }
+
+            if (result) {
+                try timeout.register_self(login, time
+                    + config.timeout.seconds.i
+                    + config.timeout.minutes.i * 60
+                    + config.timeout.hours.i * 60 * 60,
+                    allocator);
+            }
+
+            launch.without_args(args[1]);
+        } else {
+            if (!result) {
+                if (c.geteuid() != 0) {
+                    root.rootize();
+                }
+            } else {
+                std.debug.print("Wrong password!\n", .{});
+            }
         }
 
-        if (result) {
-            try timeout.register_self(login, time
-                + config.timeout.seconds.i
-                + config.timeout.minutes.i * 60
-                + config.timeout.hours.i * 60 * 60,
-                allocator);
-        }
+        std.os.exit(0);
     }
 }
