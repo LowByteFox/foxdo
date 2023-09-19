@@ -1,4 +1,5 @@
 const std = @import("std");
+const utils = @import("utils.zig");
 const foxconfig = @import("foxconfig");
 const Value = foxconfig.Value;
 
@@ -13,12 +14,6 @@ pub const Config = struct {
         groups: Value
     }
 };
-
-fn copy_over(buff: []u8, start: usize, str: []const u8) void {
-    for (0..str.len) |i| {
-        buff[i + start] = str[i];
-    }
-}
 
 pub fn parse_config(allocator: std.mem.Allocator) !?Config {
     var config_file: std.fs.File = std.fs.openFileAbsolute("/etc/foxdo", .{}) catch |e| {
@@ -39,7 +34,7 @@ pub fn parse_config(allocator: std.mem.Allocator) !?Config {
         }
 
         data = try allocator.realloc(data.?, data.?.len + bytes_read);
-        copy_over(data.?, data.?.len - bytes_read, buff[0..bytes_read]);
+        utils.copy_over(data.?, data.?.len - bytes_read, buff[0..bytes_read]);
     }
 
     if (data != null) {

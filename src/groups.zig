@@ -34,7 +34,6 @@ pub fn check_groups(config: *conf.Config) bool {
 pub fn check_users(config: *conf.Config) bool {
     const login = std.os.getenv("USER").?;
 
-
     for (config.allow.users.a_s.items) |item| {
         const fixed_item = item[1..item.len - 1];
 

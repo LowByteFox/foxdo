@@ -1,6 +1,7 @@
 const std = @import("std");
 const conf = @import("config.zig");
 const grp = @import("groups.zig");
+const timeout = @import("timeout.zig");
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -27,10 +28,28 @@ pub fn main() !void {
     var has_group = grp.check_groups(&config);
     var has_user = grp.check_users(&config);
 
-    if (!(has_group || has_user)) {
+    if (!(has_group or has_user)) {
         std.debug.print("foxdo: not allowed!\n", .{});
         std.os.exit(1);
     }
 
-    
+    const login = std.os.getenv("USER").?;
+
+    const time: i64 = std.time.timestamp();
+
+    const result = try timeout.check_self(login, time, allocator);
+
+    if (args.len == 2) {
+        if (!result) {
+            std.debug.print("Enter password for [{s}]: \n", .{login});
+        }
+
+        if (!result) {
+            try timeout.register_self(login, time
+                + config.timeout.seconds.i * 1000
+                + config.timeout.minutes.i * 60 * 1000
+                + config.timeout.hours.i * 60 * 60 * 1000,
+                allocator);
+        }
+    }
 }
