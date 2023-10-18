@@ -10,6 +10,7 @@ cd foxdo
 zig build
 ```
 <br>
+
 After that run `rootize.sh` as root and install
 
 # Installation
