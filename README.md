@@ -7,7 +7,7 @@ minimal sudo in zig
 ```sh
 git clone https://codeberg.org/LowByteFox/foxdo.git --recurse-submodules
 cd foxdo
-zig build
+zig build -Dcpu=baseline -Dtarget=x86_64-linux-musl
 ```
 <br>
 
