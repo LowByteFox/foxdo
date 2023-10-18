@@ -49,9 +49,7 @@ pub fn main() !void {
         }
 
         if (result and auth.check_password(login, std.mem.span(c.getpass("")))) {
-            if (c.getuid() != 0) {
-                root.rootize();
-            }
+            root.rootize();
 
             if (result) {
                 try timeout.register_self(login, time
@@ -64,9 +62,7 @@ pub fn main() !void {
             launch.without_args(args[1]);
         } else {
             if (!result) {
-                if (c.geteuid() != 0) {
-                    root.rootize();
-                }
+                root.rootize();
                 launch.without_args(args[1]);
             } else {
                 std.debug.print("wrong password!\n", .{});
