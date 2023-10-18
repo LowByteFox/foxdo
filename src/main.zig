@@ -70,11 +70,43 @@ pub fn main() !void {
                 if (c.geteuid() != 0) {
                     root.rootize();
                 }
+                launch.without_args(args[1]);
             } else {
-                std.debug.print("Wrong password!\n", .{});
+                std.debug.print("wrong password!\n", .{});
             }
         }
 
         std.os.exit(0);
     }
+
+   if (result) {
+       std.debug.print("Enter password for [{s}]: ", .{login});
+   }
+
+   var run_args = args[2..];
+
+   if (result and auth.check_password(login, std.mem.span(c.getpass("")))) {
+       if (c.getuid() != 0) {
+           root.rootize();
+       }
+
+       if (result) {
+           try timeout.register_self(login, time
+               + config.timeout.seconds.i
+               + config.timeout.minutes.i * 60
+               + config.timeout.hours.i * 60 * 60,
+               allocator);
+       }
+
+        try launch.with_args(args[1], run_args, allocator);
+   } else {
+       if (!result) {
+           if (c.geteuid() != 0) {
+               root.rootize();
+           }
+           try launch.with_args(args[1], run_args, allocator);
+       } else {
+           std.debug.print("wrong password!\n", .{});
+       }
+   }
 }

@@ -1,0 +1,10 @@
+allow {
+    users = ["root"]
+    groups = ["wheel"]
+}
+
+timeout {
+    seconds = 0
+    minutes = 5
+    hours = 0
+}

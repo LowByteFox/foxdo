@@ -15,6 +15,7 @@ pub fn build(b: *std.Build) void {
 
     b.installArtifact(exe);
     exe.linkLibC();
+    exe.linkSystemLibrary("crypt");
     foxconfig.addTo(exe);
 
     const run_cmd = b.addRunArtifact(exe);
